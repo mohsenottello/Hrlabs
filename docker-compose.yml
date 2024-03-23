@@ -1,0 +1,58 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Development.Dockerfile
+    container_name: "hrlabs_app"
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/hrlabs
+    networks:
+      - hrlabs_net
+    ports:
+      - "3000:3000"
+    links:
+      - sidekiq
+      - postgres
+      - redis
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Development.Dockerfile
+    command: bundle exe sidekiq
+    container_name: "hrlabs_sidekiq"
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/hrlabs
+    networks:
+      - hrlabs_net
+    links:
+      - postgres
+      - redis
+    environment:
+      - REDIS_URL_SIDEKIQ=redis://redis:6379/1
+  postgres:
+    image: camptocamp/postgres:9.6
+    container_name: "hrlabs_postgres"
+    networks:
+      - hrlabs_net
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_USER: "ottello"
+      POSTGRES_PASSWORD: "ottello"
+  redis:
+    image: redis
+    command: redis-server
+    networks:
+      - hrlabs_net
+    ports:
+      - "6379:6379"
+volumes:
+  hrlabs_vol:
+networks:
+  hrlabs_net:

@@ -35,5 +35,8 @@ module Hrlabs
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.active_job.queue_adapter = :sidekiq
+    config.cache_store = :redis_store, Rails.application.credentials[:cache_server][:app_cache],
+                         { expires_in: Rails.application.credentials[:cache_server][:expiration_minutes].minutes }
   end
 end
