@@ -36,6 +36,7 @@ gem 'bootsnap', require: false
 
 # For handling background job
 gem 'sidekiq'
+gem 'sidekiq-cron'
 
 # For caching
 gem 'redis-rails'

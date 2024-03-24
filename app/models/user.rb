@@ -7,4 +7,6 @@ class User < ApplicationRecord
   validates :json_web_token, presence: true
 
   has_many :messages
+
+  scope :search_by_day, ->(date) { where('users.created_at >= ? AND users.created_at <?', date.beginning_of_day, date.end_of_day) }
 end
