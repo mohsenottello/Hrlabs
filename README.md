@@ -1,107 +1,95 @@
 # Introduction
 
-Your task is to develop a REST API based on "Ruby on Rails".
+    This task has been done by docker and docker compose
+    ruby version 3.3.0
+    rails version 7.1.3.2
+    os linux(afai in other os instead of docker compose we should use docker-compose command)
+### For setting up the system you can use this secrets or you can use my master.key
 
-# General requirements for the API
+    secret_key_base: 83e5d5a5a619a6f5a0141e7a41bb2063b269924ac9043efc3788ee61441187f682cb62d2c91951cb3322d52b60c62d36ea70027312dd99dab20c48481ca73766
 
-- Use JSON as data format.
-- Use Postgres or SQLite as database.
-- Use the latest stable Rails version.
+    db:
+      username: ottello
+      password: ottello
 
-# Model
-
-The API is based on two models:
-- User
-    - email [String]
-    - json_web_token [String]
+    cache_server:
+      app_cache: redis://redis:6379/1/cache
+      expiration_minutes: 90
 
 
-- Message
-    - title [String]
-    - body [String]
+my master key is
 
-Relation between "User" and "Message":
-- "User" has many "Message".
-- "Message" belongs to a "User".
+    3cd18b13ca7ec8f02dbccf46b7c0f8fb
 
-# Controller
 
-## User-Controller
+### preparing the system
 
-Two methods must be implemented for which no authentication is required.
+```bash
+    docker compose build
+    docker compose run app rails db:setup
+```
+### running test
 
-### Methods
+    docker compose run app rspec
 
-1) Create "User"
+### running server
 
-The method accepts an e-mail address and checks whether it already exists in the system.
-- If the e-mail address is not assigned, a json_web_token is generated and the "User" is created and displayed.
-- If the e-mail address is already assigned, a response should be sent with a corresponding status code.
+    docker compose up
 
-2) Display many "User"
+### shutting down serve
 
-- The method returns all users (email, json_web_token) that exist in the system.
-- Add a suitable method to limit the number of objects returned.
+    docker compose down
 
-### Message controller
 
-Four methods must be implemented for which authentication is required.
+# APIS
 
-### Methods
+### Users
 
-1) Create
+- Create "User"
 
-- An authenticated "User" should be able create a "Message" that is assigned to him.
+  - email(required)
 
-2) Change
+        curl --location --request POST '0.0.0.0:3000/api/users?email=mo.ahmadzade%40gmail.com'
 
-- An authenticated "User" should be able to change a "Message" assigned to him. He may not change the assignment!
+- Display many "User"
+    - page(optional)
+    - per_page(optional)
 
-3) Display a "Message"
+            curl --location '0.0.0.0:3000/api/users?page=0&per_page=4'
 
-- Display one Message by its Message#id.
+## Messages
+- Create
+    - title(required)
+    - body(optional)
 
-4) Display and filter many "Message"
+            curl --location '0.0.0.0:3000/api/messages' \
+                --header 'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1vLmFobWFkemFkZUBnbWFpbC5jb20ifQ.nSCJdckdGgXy8JucFHQl_6xZ1KhE51M-wnvDUZvPVyE' \
+                --form 'title="12"'
 
-- All "Message" objects should be returned.
-- Add a suitable method to limit the number of objects returned.
-- It should be possible to search for "Message" objects that are assigned to a specific "User".
+- Change
+    - title(optional)
+    - body(optional)
 
-# Job
+            curl --location --request PATCH '0.0.0.0:3000/api/messages/1' \
+                --header 'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1vLmFobWFkemFkZUBnbWFpbC5jb20ifQ.nSCJdckdGgXy8JucFHQl_6xZ1KhE51M-wnvDUZvPVyE' \
+                -form 'title="12"'
 
-Every night at 23:59 a job should run that exports all new "User" and all new "Message" objects of the current day to separate CSV files.
+- Display a "Message"
 
-# Authentication
+        curl --location --request GET '0.0.0.0:3000/api/messages/3' \
+        --header 'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1vLmFobWFkemFkZUBnbWFpbC5jb20ifQ.nSCJdckdGgXy8JucFHQl_6xZ1KhE51M-wnvDUZvPVyE'
 
-User#json_web_token never expires and does not require a refresh token.
+- Display and filter many "Message"
+    - page(optional)
+    - per_page(optional)
+    - keyword(optional)
 
-# Testing
+            curl --location --request GET '0.0.0.0:3000/api/messages?keyword=test&page=0&per_page=4' \
+                --header 'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1vLmFobWFkemFkZUBnbWFpbC5jb20ifQ.nSCJdckdGgXy8JucFHQl_6xZ1KhE51M-wnvDUZvPVyE'
 
-Test your code. We use rspec, but another test suite would also be acceptable for this task if you have more experience with another one.
+### some improvement
 
-# Rubocop
+    - instead of using string for body in message table, we should use text
+    - For report, if we have a lot of data, we must modify it to generate csv file with batches
+    - For API, we can have other pagination like total or next
 
-Format the code with the ".rubocop.yml" provided by us. See rubocop.yml
-
-Use the following gems:
-- rubocop-factory_bot
-- rubocop-performance
-- rubocop-rails
-- rubocop-rspec
-- rubocop-thread_safety
-
-# Docker
-
-The application should be able to be launched via Docker.
-
-- Create Dockerfile(s) if needed.
-- Create a "docker-compose.yml" file.
-
-# readme-api.md
-
-Should contain just a short description how to start and use the API.
-
-- Create a readme-api.md in your project.
-- Describe which configuration steps are necessary to start the API.
-- Describe how the API can be accessed via "curl".
-- Describe how the application can be started via docker.
