@@ -13,5 +13,7 @@ Rails.application.routes.draw do
   # for user
   namespace :api do
     resources :users, only: %i[index create]
+
+    resources :messages, only: %i[index create update show]
   end
 end

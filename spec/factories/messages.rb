@@ -2,8 +2,14 @@
 
 FactoryBot.define do
   factory :message do
-    title { 'test title' }
-    body { 'test body' }
+    sequence :title do |n|
+      "title#{n} test"
+    end
+
+    sequence :body do |n|
+      "body#{n} test"
+    end
+
     user
   end
 end

@@ -98,7 +98,7 @@ RSpec.describe Api::UsersController do
       context 'when we do not have anything' do
         let(:params) { {} }
 
-        it_behaves_like 'correct meta and users', user_count: 5, per_page: 10, page: 0
+        it_behaves_like 'correct meta and users', user_count: 5, per_page: 3, page: 0
       end
 
       context 'when we have per_page' do
