@@ -15,7 +15,7 @@ RSpec.describe Message do
   end
 
   describe 'invalid model' do
-    describe 'without title' do
+    context 'without title' do
       let(:title) { nil }
 
       it 'show it is invalid' do
@@ -23,7 +23,7 @@ RSpec.describe Message do
       end
     end
 
-    describe 'without email' do
+    context 'without email' do
       let(:user) { nil }
 
       it 'show it is invalid' do

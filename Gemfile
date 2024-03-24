@@ -53,6 +53,8 @@ group :development, :test do
   # For test code
   gem 'rspec-rails'
 
+  gem 'active_model_serializers'
+
   # For code styling
   gem 'rubocop', '~> 1.62', require: false
   gem 'rubocop-factory_bot', require: false

@@ -14,7 +14,7 @@ RSpec.describe User do
   end
 
   describe 'invalid model' do
-    describe 'not uniq email' do
+    context 'when email is not uniq' do
       let(:user_2) { create(:user, email: email, json_web_token: json_web_token) }
 
       it 'show it is invalid' do
@@ -24,7 +24,7 @@ RSpec.describe User do
       end
     end
 
-    describe 'wrong email' do
+    context 'when email is wrong' do
       let(:email) { '@mmm@gmail.com' }
 
       it 'show it is invalid' do
@@ -32,7 +32,7 @@ RSpec.describe User do
       end
     end
 
-    describe 'without email' do
+    context 'without email' do
       let(:email) { nil }
 
       it 'show it is invalid' do
@@ -40,7 +40,7 @@ RSpec.describe User do
       end
     end
 
-    describe 'without json_web_token' do
+    context 'without json_web_token' do
       let(:json_web_token) { nil }
 
       it 'show it is invalid' do
