@@ -10,10 +10,12 @@ class Api::MessagesController < Api::ApplicationController
 
   # Get /api/messages
   def index
-    messages = current_user.messages
-    messages = messages.search_by_keyword(params[:keyword]) if params[:keyword]
+    Rails.cache.fetch("#{current_user.id}/#{current_user.updated_at}/#{@offset}/#{@limit}/#{params[:keyword]}", expires_in: 90.minutes) do
+      messages = current_user.messages
+      messages = messages.search_by_keyword(params[:keyword]) if params[:keyword]
 
-    render json: messages.limit(@limit).offset(@offset * @limit), meta: { per_page: @limit, page: @offset }
+      render json: messages.limit(@limit).offset(@offset * @limit), meta: { per_page: @limit, page: @offset }
+    end
   end
 
   # Get /api/messages/:id

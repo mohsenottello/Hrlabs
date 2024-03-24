@@ -1,4 +1,4 @@
 report_new_messages_and_users:
   cron: "0 59 23 * * *"
-  class: "ReportNewMessagesAndUsersJob"
+  class: "Daily::ReportNewMessagesAndUsersJob"
   queue: default

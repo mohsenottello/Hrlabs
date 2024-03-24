@@ -7,7 +7,7 @@ class Importer::ModelsByDate
   end
 
   def initialize(model:, date:)
-    raise ArgumentError, "model shoud be Class, not #{model.class}" unless model.is_a?(Class)
+    raise ArgumentError, "model shoud be String, not #{model.class}" unless model.is_a?(String)
     raise ArgumentError, "date shoud be Date, not #{date.class}" unless date.is_a?(Date)
 
     @model = model
@@ -15,6 +15,7 @@ class Importer::ModelsByDate
   end
 
   def call
+    @model = @model.constantize
     array = @model.search_by_day(@date).as_json
 
     return if array.blank?

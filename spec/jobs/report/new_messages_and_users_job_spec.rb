@@ -3,18 +3,19 @@
 require 'rails_helper'
 RSpec.describe Report::NewMessagesAndUsersJob do
   describe '#perform' do
-    subject { described_class.new.perform(model, date) }
+    subject { described_class.new.perform(model) }
 
-    let(:model) { User }
-    let(:date) { Date.yesterday }
+    let(:model) { 'User' }
 
     context 'when parameters pass' do
       before do
         allow(Importer::ModelsByDate).to receive(:call)
       end
 
-      it 'run without error' do
-        expect { subject }.not_to raise_error
+      it 'run Importer::ModelsByDate' do
+        subject
+
+        expect(Importer::ModelsByDate).to have_received(:call)
       end
     end
   end

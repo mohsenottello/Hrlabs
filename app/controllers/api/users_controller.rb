@@ -6,7 +6,9 @@ class Api::UsersController < Api::ApplicationController
 
   # Get /api/users
   def index
-    render json: User.limit(@limit).offset(@offset * @limit), meta: { per_page: @limit, page: @offset }
+    Rails.cache.fetch("#{User.last.id}/#{@offset}/#{@limit}", expires_in: 90.minutes) do
+      render json: User.limit(@limit).offset(@offset * @limit), meta: { per_page: @limit, page: @offset }
+    end
   end
 
   # Post /api/users
